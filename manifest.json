@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "WU Browser Shield",
+  "version": "1.0 Beta",
+  "description": "Blocks ads, trackers, and enforces HTTPS.",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  }
+}
