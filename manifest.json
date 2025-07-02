@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WU Browser Shield",
-  "version": "1.0 Beta",
+  "version": "1.0",
   "description": "Blocks ads, trackers, and enforces HTTPS.",
   "permissions": [
     "webRequest",
