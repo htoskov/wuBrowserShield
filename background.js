@@ -1,11 +1,20 @@
 const BLOCKLIST_URLS = [
-    'https://easylist.to/easylist/easylist.txt', // EasyList
-    'https://raw.githubusercontent.com/kboghdady/youTube_ads_4_pi-hole/master/black.list' // YouTube ad block list
+    'https://easylist.to/easylist/easylist.txt',
+    'https://raw.githubusercontent.com/kboghdady/youTube_ads_4_pi-hole/master/black.list',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-1.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-2.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-3.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-4.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-5.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-6.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-7.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-8.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/YouTube/YoutubeAdblock-9.txt',
+    'https://raw.githubusercontent.com/jerryn70/GoodbyeAds/refs/heads/master/Core/GoodbyeAds-Database.txt'
 ];
 
 let adBlockList = [];
 
-// Function to fetch the block lists
 async function fetchBlockLists() {
     try {
         const fetchPromises = BLOCKLIST_URLS.map(url => fetch(url).then(response => {
@@ -16,8 +25,25 @@ async function fetchBlockLists() {
         }));
 
         const results = await Promise.all(fetchPromises);
-        adBlockList = results.flatMap(text => 
-            text.split('\n').filter(line => line && !line.startsWith('#') && !line.startsWith('[') && !line.startsWith('!'))
+
+        adBlockList = results.flatMap(text =>
+            text.split('\n')
+                .map(line => line.trim())
+                .filter(line =>
+                    line && 
+                    !line.startsWith('#') &&
+                    !line.startsWith('[') &&
+                    !line.startsWith('!')
+                )
+                .map(line => {
+                    // If it's a hosts line like "0.0.0.0 domain.com", extract the domain
+                    const parts = line.split(/\s+/);
+                    if (parts.length >= 2 && parts[0].match(/^0\.0\.0\.0|127\.0\.0\.1$/)) {
+                        return parts[1];
+                    }
+                    // Otherwise assume it's a domain or pattern on its own
+                    return line;
+                })
         );
 
         console.log('Ad Block List Loaded:', adBlockList);
